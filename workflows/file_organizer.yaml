@@ -1,0 +1,42 @@
+version: 2
+status: ready
+name: Organize a file in Explorer
+description: Open a workspace, create an archive folder, move and rename a file, and verify the final folder.
+parameters:
+  workspace: {type: directory}
+  archive_name: {type: text, example: Archive}
+  source_name: {type: text, example: report.csv}
+  destination_name: {type: text, example: reviewed-report.csv}
+write_roots: ['{workspace}']
+steps:
+  - id: 1
+    surface: filesystem
+    action: open_directory
+    path: '{workspace}'
+    purpose: Open the supplied workspace in Explorer.
+    postcondition: {kind: directory_open, path: '{workspace}'}
+  - id: 2
+    surface: filesystem
+    action: create_directory
+    path: '{workspace}/{archive_name}'
+    purpose: Create a new archive directory.
+    postcondition: {kind: path_state, path: '{workspace}/{archive_name}', state: directory}
+  - id: 3
+    surface: filesystem
+    action: move_path
+    source: '{workspace}/{source_name}'
+    destination: '{workspace}/{archive_name}/{destination_name}'
+    save_as: archived_file
+    purpose: Move and rename the selected file, preserving its contents.
+    postcondition:
+      kind: path_transferred
+      source: '{workspace}/{source_name}'
+      destination: '{workspace}/{archive_name}/{destination_name}'
+      source_absent: true
+  - id: 4
+    surface: filesystem
+    action: open_directory
+    path: '{workspace}/{archive_name}'
+    purpose: Open the verified archive directory in Explorer.
+    postcondition: {kind: directory_open, path: '{workspace}/{archive_name}'}
+confirm_before: []

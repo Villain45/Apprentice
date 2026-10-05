@@ -1,0 +1,34 @@
+# Explicit review of the original Phase 1 recording.
+# Step overrides use IDs in the generated seven-step draft, before insertion.
+description: Sign in, export the monthly CSV, select its month, and submit it to the finance portal.
+parameters:
+  month:
+    type: choice
+    example: September
+    choices: [January, February, March, April, May, June, July, August, September, October, November, December]
+steps:
+  3:
+    purpose: Sign in to the finance portal.
+    postcondition:
+      kind: element_visible
+      target: {role: button, name: Export report, css: '#exportBtn'}
+  4:
+    purpose: Download the monthly report as a CSV.
+  7:
+    purpose: Submit the report for the selected month and amount.
+    postcondition:
+      kind: text_visible
+      target: {css: '#result'}
+      text: 'Submitted: {month}, {total_amount},'
+      exact: false
+insert_before:
+  - step: 5
+    action: select
+    target: {role: combobox, name: Month, css: '#month'}
+    value: '{month}'
+    purpose: Select the month matching the exported report.
+    postcondition:
+      kind: selection
+      target: {role: combobox, name: Month, css: '#month'}
+      value: '{month}'
+      by: label

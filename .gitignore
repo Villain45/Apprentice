@@ -1,0 +1,64 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python environments, bytecode, and package output
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.pyd
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+pip-wheel-metadata/
+
+# Tool caches, test output, and coverage
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.tox/
+.nox/
+.hypothesis/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+/pytest.xml
+/junit.xml
+/report.xml
+
+# Private recordings, replay artifacts, downloads, and logs
+/recordings/
+/runs/
+/downloads/
+*.log
+
+# Local editor files and temporary backups
+.idea/
+.vscode/
+.vs/
+*.swp
+*.swo
+*~
+*.tmp
+*.bak
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+
+DEVELOPMENT.md
+PLAN.md
+
+# Local publishing drafts
+/devto-post.md

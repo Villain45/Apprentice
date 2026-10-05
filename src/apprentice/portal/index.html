@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Acme Finance Portal</title>
+<style>
+:root{--bg:#f4f6f8;--fg:#1a1a1a;--card:#fff;--pri:#2563eb}
+body.dark{--bg:#111;--fg:#eee;--card:#1c1c1c;--pri:#60a5fa}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--fg);margin:0}
+header{background:var(--pri);color:#fff;padding:12px 24px;display:flex;justify-content:space-between}
+main{max-width:640px;margin:24px auto;padding:0 16px}
+.card{background:var(--card);padding:20px;border-radius:8px;margin-bottom:16px}
+label{display:block;margin:10px 0 4px}
+input,select,button{padding:8px;font-size:15px}
+button{background:var(--pri);color:#fff;border:0;border-radius:6px;cursor:pointer}
+.banner{background:#fde68a;color:#000;padding:12px;text-align:center}
+.row{display:flex;gap:8px}
+.moved #app{display:flex;flex-direction:column-reverse}
+.moved #reportRow{justify-content:flex-end}
+.hidden{display:none!important}
+</style></head>
+<body>
+<div id="banner" class="banner hidden">Maintenance tonight at 10 PM. <button id="dismiss">Dismiss</button></div>
+<header><b>Acme Finance Portal</b><span id="who"></span></header>
+<main>
+  <section id="login" class="card">
+    <h2>Sign in</h2>
+    <label for="user">Username</label><input id="user">
+    <label for="pass">Password</label><input id="pass" type="password">
+    <p><button id="loginBtn">Sign in</button></p>
+  </section>
+  <section id="app" class="hidden">
+    <div class="card">
+      <h2>Monthly report</h2>
+      <div class="row" id="reportRow"><button id="exportBtn">Export report</button></div>
+      <p id="exportMsg"></p>
+    </div>
+    <div class="card">
+      <h2>Upload invoice</h2>
+      <label for="month">Month</label><select id="month"></select>
+      <label for="amount">Total amount</label><input id="amount" type="number">
+      <label for="file">Report file</label><input id="file" type="file">
+      <p><button id="submitBtn">Submit</button></p>
+      <p id="result"></p>
+    </div>
+  </section>
+</main>
+<script>
+const v = new URLSearchParams(location.search).get('v') || 'baseline';
+const $ = id => document.getElementById(id);
+window.__submissions = [];
+['January','February','March','April','May','June','July','August','September','October','November','December']
+  .forEach(m => $('month').add(new Option(m)));
+
+if (v === 'dark')  document.body.classList.add('dark');
+if (v === 'banner') $('banner').classList.remove('hidden');
+if (v === 'zoom')  document.body.style.zoom = '1.3';
+if (v === 'moved') document.body.classList.add('moved');
+if (v === 'renamed') {
+  $('exportBtn').textContent = 'Download summary';
+  $('submitBtn').textContent = 'Send';
+  $('loginBtn').textContent = 'Log in';
+  document.querySelector('label[for=amount]').textContent = 'Amount due';
+}
+$('dismiss').onclick = () => $('banner').classList.add('hidden');
+$('loginBtn').onclick = () => {
+  if (!$('user').value || !$('pass').value) return;
+  $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+  $('who').textContent = $('user').value;
+};
+$('exportBtn').onclick = () => {
+  const name = 'report-2026-09.csv';
+  const blob = new Blob(['item,total\nlicenses,1200\nsupport,300\n'], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  $('exportMsg').textContent = 'Exported ' + name;
+};
+$('submitBtn').onclick = () => {
+  const f = $('file').files[0];
+  if (!f || !$('amount').value) { $('result').textContent = 'Missing file or amount.'; return; }
+  window.__submissions.push({month:$('month').value, amount:$('amount').value, file:f.name});
+  $('result').textContent = `Submitted: ${$('month').value}, ${$('amount').value}, ${f.name}`;
+};
+</script>
+</body></html>

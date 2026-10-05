@@ -1,0 +1,16 @@
+{
+  "name": "monthly_report",
+  "start_url": "http://localhost:8000/?v=baseline",
+  "steps": [
+    {"step": 1, "kind": "navigate", "url": "http://localhost:8000/?v=baseline"},
+    {"step": 2, "kind": "type", "element": {"tag": "input", "type": "text", "label": "Username", "css": "#user"}, "value": "demo"},
+    {"step": 3, "kind": "type", "element": {"tag": "input", "type": "password", "label": "Password", "css": "#pass"}, "value": "test-secret-never-save"},
+    {"step": 4, "kind": "click", "element": {"tag": "button", "text": "Sign in", "css": "#loginBtn"}},
+    {"step": 5, "kind": "click", "element": {"tag": "button", "text": "Export report", "css": "#exportBtn"}},
+    {"step": 6, "kind": "download", "filename": "report-2026-09.csv"},
+    {"step": 7, "kind": "type", "element": {"tag": "input", "type": "number", "label": "Total amount", "css": "#amount"}, "value": "1500"},
+    {"step": 8, "kind": "click", "element": {"tag": "input", "type": "file", "label": "Report file", "css": "#file"}},
+    {"step": 9, "kind": "upload", "element": {"tag": "input", "type": "file", "label": "Report file", "css": "#file"}, "value": ["report-2026-09.csv"]},
+    {"step": 10, "kind": "click", "element": {"tag": "button", "text": "Submit", "css": "#submitBtn"}}
+  ]
+}

@@ -1,0 +1,179 @@
+version: 1
+status: ready
+name: monthly_report
+description: Sign in, export the monthly CSV, select its month, and submit it to the finance portal.
+start_url: http://localhost:8000/?v=baseline
+parameters:
+  username:
+    type: text
+    example: demo
+  password:
+    type: secret
+    ask_each_time: true
+  total_amount:
+    type: number
+    example: 1500
+  month:
+    type: choice
+    example: September
+    choices:
+    - January
+    - February
+    - March
+    - April
+    - May
+    - June
+    - July
+    - August
+    - September
+    - October
+    - November
+    - December
+steps:
+- id: 1
+  surface: browser
+  action: type
+  target:
+    role: textbox
+    name: Username
+    css: '#user'
+  value: '{username}'
+  purpose: Enter Username.
+  postcondition:
+    kind: input_value
+    target:
+      role: textbox
+      name: Username
+      css: '#user'
+    value: '{username}'
+  source_steps:
+  - 2
+- id: 2
+  surface: browser
+  action: type
+  target:
+    role: textbox
+    name: Password
+    css: '#pass'
+    sensitive: true
+  value: '{password}'
+  purpose: Enter Password.
+  postcondition:
+    kind: input_value
+    target:
+      role: textbox
+      name: Password
+      css: '#pass'
+      sensitive: true
+    value: '{password}'
+    sensitive: true
+  source_steps:
+  - 3
+- id: 3
+  surface: browser
+  action: click
+  target:
+    role: button
+    name: Sign in
+    css: '#loginBtn'
+  purpose: Sign in to the finance portal.
+  postcondition:
+    kind: element_visible
+    target:
+      role: button
+      name: Export report
+      css: '#exportBtn'
+  source_steps:
+  - 4
+- id: 4
+  surface: browser
+  action: click
+  target:
+    role: button
+    name: Export report
+    css: '#exportBtn'
+  purpose: Download the monthly report as a CSV.
+  postcondition:
+    kind: file_downloaded
+    pattern: '*.csv'
+    save_as: downloaded_file
+  source_steps:
+  - 5
+  - 6
+- id: 5
+  surface: browser
+  action: select
+  target:
+    role: combobox
+    name: Month
+    css: '#month'
+  value: '{month}'
+  purpose: Select the month matching the exported report.
+  postcondition:
+    kind: selection
+    target:
+      role: combobox
+      name: Month
+      css: '#month'
+    value: '{month}'
+    by: label
+  source_steps: []
+- id: 6
+  surface: browser
+  action: type
+  target:
+    role: spinbutton
+    name: Total amount
+    css: '#amount'
+  value: '{total_amount}'
+  purpose: Enter Total amount.
+  postcondition:
+    kind: input_value
+    target:
+      role: spinbutton
+      name: Total amount
+      css: '#amount'
+    value: '{total_amount}'
+  source_steps:
+  - 7
+- id: 7
+  surface: browser
+  action: upload
+  target:
+    role: file_input
+    name: Report file
+    css: '#file'
+  value: '{downloaded_file}'
+  purpose: Choose files for Report file.
+  postcondition:
+    kind: files_selected
+    target:
+      role: file_input
+      name: Report file
+      css: '#file'
+    files:
+    - '{downloaded_file}'
+  source_steps:
+  - 8
+  - 9
+  irreversible: true
+- id: 8
+  surface: browser
+  action: click
+  target:
+    role: button
+    name: Submit
+    css: '#submitBtn'
+  purpose: Submit the report for the selected month and amount.
+  postcondition:
+    kind: text_visible
+    text: 'Submitted: {month}, {total_amount},'
+    target:
+      css: '#result'
+    exact: false
+  source_steps:
+  - 10
+  irreversible: true
+confirm_before:
+- 7
+- 8

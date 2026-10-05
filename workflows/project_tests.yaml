@@ -1,0 +1,33 @@
+version: 2
+status: ready
+name: Open a project and run its tests
+description: Open a reviewed project directory in Explorer and VS Code, then run pytest from that directory.
+parameters:
+  project_dir: {type: directory}
+  python_executable: {type: file}
+write_roots: ['{project_dir}']
+steps:
+  - id: 1
+    surface: filesystem
+    action: open_directory
+    path: '{project_dir}'
+    purpose: Open the project directory in Explorer.
+    postcondition: {kind: directory_open, path: '{project_dir}'}
+  - id: 2
+    surface: application
+    action: open_project
+    app: vscode
+    timeout_ms: 30000
+    path: '{project_dir}'
+    purpose: Open and verify the project workspace in VS Code.
+    postcondition: {kind: project_open, app: vscode, path: '{project_dir}'}
+  - id: 3
+    surface: terminal
+    action: run_command
+    executable: '{python_executable}'
+    args: ['-m', pytest, '-q']
+    cwd: '{project_dir}'
+    timeout_ms: 120000
+    purpose: Run this project's tests and verify successful completion.
+    postcondition: {kind: command_completed, exit_code: 0}
+confirm_before: [2, 3]
